@@ -1,18 +1,27 @@
-var path = require('path');
-var express = require("express");
+import path from "path";
+import express from "express";
+import mongoose from "mongoose";
+import userRoutes from './user.routes.js'
+import config from './config.js'
+import bodyParser from 'body-parser'
+
+
 var app = express()
-const PORT = 8000
+
+const PORT = config.port;
+const MONGOURI = config.mongoUri;
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 //database stuff
 //Connection URL - you should set this ith a configuration
 //file that doesn't go in GitHub, though
 const MONGODB_URI = "mongodb://127.0.0.1:27017";
-const mongoose = require('mongoose');
-mongoose.Promise = global.Promise
-mongoose.connect(MONGODB_URI, {dbName:"users"})
-mongoose.connection.on('error', err => {
-    throw new Error('unable to connect to database: ${MONGOURI')
-})
+
+await mongoose.connect('mongodb://127.0.0.1/my_database')
+
+app.use('/', userRoutes)
 
 //404 page
 app.use(function (req, res, next){
